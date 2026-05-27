@@ -94,6 +94,8 @@ const els = {
   backToLoginFromSignup: document.querySelector("#backToLoginFromSignup"),
   backToLogin: document.querySelector("#backToLogin"),
   logoutBtn: document.querySelector("#logoutBtn"),
+  userInitial: document.querySelector("#userInitial"),
+  userName: document.querySelector("#userName"),
   navItems: document.querySelectorAll(".nav-item"),
   views: {
     dashboard: document.querySelector("#dashboardView"),
@@ -167,6 +169,12 @@ function showLogin() {
 function showApp() {
   els.authScreen.hidden = true;
   els.appShell.hidden = false;
+}
+
+function renderCurrentUser() {
+  const label = currentSession?.displayName || currentSession?.email || "Usuário";
+  els.userName.textContent = label;
+  els.userInitial.textContent = label.trim().slice(0, 1).toUpperCase() || "U";
 }
 
 function toFirestoreDoc(vehicle) {
@@ -899,6 +907,7 @@ function showDataError(error) {
 async function initApp() {
   try {
     showApp();
+    renderCurrentUser();
     vehicles = await loadVehicles();
     render();
   } catch (error) {

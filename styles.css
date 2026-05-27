@@ -263,6 +263,38 @@ h2 {
   gap: 10px;
 }
 
+.user-badge {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 40px;
+  max-width: 260px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  padding: 5px 10px 5px 6px;
+}
+
+.user-badge span {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: #e9b949;
+  color: #172121;
+  font-size: 0.8rem;
+  font-weight: 900;
+}
+
+.user-badge strong {
+  overflow: hidden;
+  color: var(--ink);
+  font-size: 0.86rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .primary-btn,
 .secondary-btn,
 .ghost-btn,
