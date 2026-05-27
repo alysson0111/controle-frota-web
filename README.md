@@ -10,6 +10,7 @@ Sistema web para controle de frota de uma revendedora de veículos.
 - Exportação CSV compatível com Excel em português do Brasil
 - Firebase como banco de dados e autenticação
 - Criação de cadastro, login com e-mail/senha e recuperação de senha
+- Dados separados por usuário autenticado
 
 ## Estrutura
 
@@ -67,4 +68,4 @@ O sistema só carrega após login no Firebase. A tela inicial permite criar cada
 
 ## Segurança
 
-As regras atuais permitem acesso aos veículos para qualquer usuário autenticado. Para separar dados por empresa, filial ou usuário, o próximo passo recomendado é adicionar um campo `empresaId` aos veículos e ajustar as regras do Firestore.
+As regras atuais vinculam cada veículo ao campo `ownerUid`. Cada usuário autenticado só consegue ler, criar, editar e excluir os próprios veículos.

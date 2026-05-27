@@ -170,8 +170,13 @@ function showApp() {
 }
 
 function toFirestoreDoc(vehicle) {
+  if (!currentSession?.uid) {
+    throw new Error("Usuário não autenticado.");
+  }
+
   return {
     id: vehicle.id,
+    ownerUid: currentSession.uid,
     model: vehicle.model,
     year: vehicle.year,
     plate: vehicle.plate,
@@ -195,6 +200,7 @@ function fromFirestoreDoc(doc) {
   const row = doc.data();
   return {
     id: row.id || doc.id,
+    ownerUid: row.ownerUid || "",
     model: row.model,
     year: Number(row.year),
     plate: row.plate,
@@ -209,14 +215,24 @@ function fromFirestoreDoc(doc) {
     salePrice: Number(row.salePrice),
     maintenanceDue: row.maintenanceDue,
     docs: row.docs || { crlv: false, ipva: false, inspection: false, transfer: false },
-    notes: row.notes || ""
+    notes: row.notes || "",
+    updatedAt: row.updatedAt?.toMillis?.() || 0
   };
 }
 
 async function loadVehicles() {
   const { db } = firebaseServices();
-  const snapshot = await db.collection("vehicles").orderBy("updatedAt", "desc").get();
-  return snapshot.docs.map(fromFirestoreDoc);
+  if (!currentSession?.uid) {
+    throw new Error("Usuário não autenticado.");
+  }
+
+  const snapshot = await db
+    .collection("vehicles")
+    .where("ownerUid", "==", currentSession.uid)
+    .get();
+  return snapshot.docs
+    .map(fromFirestoreDoc)
+    .sort((a, b) => String(b.updatedAt || b.entryDate).localeCompare(String(a.updatedAt || a.entryDate)));
 }
 
 async function saveVehicleRecord(vehicle) {

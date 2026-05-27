@@ -19,6 +19,7 @@ Use estes campos:
 | Campo | Tipo | Exemplo |
 | --- | --- | --- |
 | `id` | string | `abc123` |
+| `ownerUid` | string | UID do usuário logado |
 | `model` | string | `Honda Civic EXL` |
 | `year` | number | `2022` |
 | `plate` | string | `RVD2A19` |
@@ -67,3 +68,7 @@ Você pode criar a coleção manualmente, mas não é obrigatório. O sistema ta
 - O Firebase esteja configurado em `config.js`.
 - O usuário esteja logado.
 - As regras do Firestore tenham sido publicadas.
+
+## Separação por usuário
+
+O sistema preenche automaticamente o campo `ownerUid` com o UID do usuário logado. As regras em `firestore.rules` usam esse campo para garantir que cada usuário acesse apenas os próprios veículos.
