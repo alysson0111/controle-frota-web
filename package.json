@@ -1,0 +1,10 @@
+{
+  "name": "controle-frota-asj",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Sistema de controle de frota para revendedora de veículos.",
+  "scripts": {
+    "start": "npx serve .",
+    "preview": "npx serve ."
+  }
+}

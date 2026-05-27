@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Controle de Frota | Revendedora</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <section class="auth-screen" id="authScreen">
+      <div class="auth-card">
+        <div class="brand auth-brand">
+          <div class="brand-mark">ASJ</div>
+          <div>
+            <strong>Controle Frota</strong>
+            <span>Acesso ao sistema</span>
+          </div>
+        </div>
+
+        <form class="auth-form active" id="loginForm">
+          <div>
+            <p class="eyebrow">Login</p>
+            <h1>Entrar no sistema</h1>
+          </div>
+          <label>E-mail<input id="loginEmail" type="email" autocomplete="email" required placeholder="usuario@empresa.com" /></label>
+          <label>Senha<input id="loginPassword" type="password" autocomplete="current-password" required placeholder="Digite sua senha" /></label>
+          <button class="primary-btn" type="submit">Entrar</button>
+          <button class="link-btn" id="showSignup" type="button">Criar cadastro</button>
+          <button class="link-btn" id="showForgotPassword" type="button">Esqueci minha senha</button>
+        </form>
+
+        <form class="auth-form" id="signupForm">
+          <div>
+            <p class="eyebrow">Cadastro</p>
+            <h1>Criar acesso</h1>
+          </div>
+          <label>Nome<input id="signupName" required autocomplete="name" placeholder="Nome do usuário" /></label>
+          <label>E-mail<input id="signupEmail" type="email" autocomplete="email" required placeholder="usuario@empresa.com" /></label>
+          <label>Senha<input id="signupPassword" type="password" autocomplete="new-password" required minlength="6" placeholder="Mínimo 6 caracteres" /></label>
+          <label>Confirmar senha<input id="signupConfirmPassword" type="password" autocomplete="new-password" required minlength="6" placeholder="Repita a senha" /></label>
+          <button class="primary-btn" type="submit">Criar cadastro</button>
+          <button class="link-btn" id="backToLoginFromSignup" type="button">Voltar para o login</button>
+        </form>
+
+        <form class="auth-form" id="forgotForm">
+          <div>
+            <p class="eyebrow">Recuperação</p>
+            <h1>Refazer senha</h1>
+          </div>
+          <p class="auth-copy">Informe seu e-mail para receber o link de redefinição de senha.</p>
+          <label>E-mail<input id="forgotEmail" type="email" autocomplete="email" required placeholder="usuario@empresa.com" /></label>
+          <button class="primary-btn" type="submit">Enviar link</button>
+          <button class="link-btn" id="backToLogin" type="button">Voltar para o login</button>
+        </form>
+
+        <form class="auth-form" id="resetForm">
+          <div>
+            <p class="eyebrow">Nova senha</p>
+            <h1>Criar nova senha</h1>
+          </div>
+          <label>Nova senha<input id="newPassword" type="password" autocomplete="new-password" required minlength="6" placeholder="Mínimo 6 caracteres" /></label>
+          <label>Confirmar senha<input id="confirmPassword" type="password" autocomplete="new-password" required minlength="6" placeholder="Repita a nova senha" /></label>
+          <button class="primary-btn" type="submit">Atualizar senha</button>
+        </form>
+
+        <div class="auth-message" id="authMessage" role="status"></div>
+      </div>
+    </section>
+
+    <div class="app-shell" id="appShell" hidden>
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-mark">ASJ</div>
+          <div>
+            <strong>Controle Frota</strong>
+            <span>Revendedora de veículos</span>
+          </div>
+        </div>
+
+        <nav class="nav" aria-label="Navegação principal">
+          <button class="nav-item active" data-view="dashboard" type="button">
+            <span aria-hidden="true">▦</span> Painel
+          </button>
+          <button class="nav-item" data-view="vehicles" type="button">
+            <span aria-hidden="true">▤</span> Veículos
+          </button>
+          <button class="nav-item" data-view="maintenance" type="button">
+            <span aria-hidden="true">⚙</span> Manutenção
+          </button>
+          <button class="nav-item" data-view="documents" type="button">
+            <span aria-hidden="true">✓</span> Documentos
+          </button>
+          <button class="nav-item" data-view="reports" type="button">
+            <span aria-hidden="true">▣</span> Relatórios
+          </button>
+        </nav>
+
+        <div class="sidebar-note">
+          <span>Saldo previsto</span>
+          <strong id="sidebarProfit">R$ 0,00</strong>
+        </div>
+      </aside>
+
+      <main class="main">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Gestão de Veículos</p>
+            <h1>Controle de Frota</h1>
+          </div>
+          <div class="top-actions">
+            <button class="icon-btn" id="exportBtn" type="button" title="Exportar CSV" aria-label="Exportar CSV">⇩</button>
+            <button class="secondary-btn" id="logoutBtn" type="button">Sair</button>
+            <button class="primary-btn" id="openVehicleModal" type="button">
+              <span aria-hidden="true">＋</span> Novo veículo
+            </button>
+          </div>
+        </header>
+
+        <section class="toolbar" aria-label="Filtros da frota">
+          <label>
+            Buscar
+            <input id="searchInput" type="search" placeholder="Modelo, placa, chassi..." />
+          </label>
+          <label>
+            Status
+            <select id="statusFilter">
+              <option value="todos">Todos</option>
+              <option value="Disponível">Disponível</option>
+              <option value="Preparação">Preparação</option>
+              <option value="Reservado">Reservado</option>
+              <option value="Vendido">Vendido</option>
+            </select>
+          </label>
+          <label>
+            Origem
+            <select id="originFilter">
+              <option value="todos">Todas</option>
+              <option value="Compra direta">Compra direta</option>
+              <option value="Troca">Troca</option>
+              <option value="Consignado">Consignado</option>
+              <option value="Leilão">Leilão</option>
+            </select>
+          </label>
+        </section>
+
+        <section class="view active" id="dashboardView">
+          <div class="metrics-grid">
+            <article class="metric">
+              <span>Veículos em estoque</span>
+              <strong id="stockCount">0</strong>
+              <small id="stockValue">R$ 0,00 investidos</small>
+            </article>
+            <article class="metric">
+              <span>Prontos para venda</span>
+              <strong id="readyCount">0</strong>
+              <small>Documentação e preparação ok</small>
+            </article>
+            <article class="metric warning">
+              <span>Pendências</span>
+              <strong id="pendingCount">0</strong>
+              <small>Documentos ou manutenção</small>
+            </article>
+            <article class="metric sold">
+              <span>Veículos vendidos</span>
+              <strong id="soldCount">0</strong>
+              <small>Negociações concluídas</small>
+            </article>
+            <article class="metric success">
+              <span>Margem prevista</span>
+              <strong id="profitValue">R$ 0,00</strong>
+              <small id="avgMargin">0% média</small>
+            </article>
+          </div>
+
+          <div class="dashboard-grid">
+            <section class="panel">
+              <div class="panel-head">
+                <h2>Distribuição da frota</h2>
+                <span>Por status</span>
+              </div>
+              <div id="statusChart" class="status-chart" aria-label="Gráfico de status"></div>
+            </section>
+
+            <section class="panel">
+              <div class="panel-head">
+                <h2>Alertas prioritários</h2>
+                <span>Próximas ações</span>
+              </div>
+              <div id="alertsList" class="alerts-list"></div>
+            </section>
+          </div>
+        </section>
+
+        <section class="view" id="vehiclesView">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Veículo</th>
+                  <th>Placa</th>
+                  <th>Status</th>
+                  <th>Entrada</th>
+                  <th>Custo total</th>
+                  <th>Preço venda</th>
+                  <th>Margem</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody id="vehicleRows"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="view" id="maintenanceView">
+          <div class="kanban" id="maintenanceBoard"></div>
+        </section>
+
+        <section class="view" id="documentsView">
+          <div class="doc-grid" id="documentsGrid"></div>
+        </section>
+
+        <section class="view" id="reportsView">
+          <div class="reports-shell">
+            <section class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2>Relatórios</h2>
+                  <span>Estoque atual e veículos vendidos por período</span>
+                </div>
+                <button class="secondary-btn" id="exportReportBtn" type="button">Exportar relatório</button>
+              </div>
+
+              <div class="report-options" aria-label="Opções de relatório">
+                <button class="report-option active" data-report="stock" type="button">Estoque</button>
+                <button class="report-option" data-report="sold" type="button">Vendidos por período</button>
+              </div>
+
+              <div class="report-period" id="reportPeriod">
+                <label>
+                  De
+                  <input id="reportStart" type="date" />
+                </label>
+                <label>
+                  Até
+                  <input id="reportEnd" type="date" />
+                </label>
+              </div>
+
+              <div class="report-summary">
+                <article class="report-card">
+                  <span id="reportMetricOneLabel">Veículos em estoque</span>
+                  <strong id="reportMetricOne">0</strong>
+                </article>
+                <article class="report-card">
+                  <span id="reportMetricTwoLabel">Valor investido</span>
+                  <strong id="reportMetricTwo">R$ 0,00</strong>
+                </article>
+                <article class="report-card">
+                  <span id="reportMetricThreeLabel">Preço total anunciado</span>
+                  <strong id="reportMetricThree">R$ 0,00</strong>
+                </article>
+                <article class="report-card">
+                  <span id="reportMetricFourLabel">Margem prevista</span>
+                  <strong id="reportMetricFour">R$ 0,00</strong>
+                </article>
+              </div>
+            </section>
+
+            <div class="table-wrap">
+              <table>
+                <thead id="reportHead"></thead>
+                <tbody id="reportRows"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <dialog id="vehicleModal">
+      <form id="vehicleForm" method="dialog">
+        <div class="modal-head">
+          <div>
+            <p class="eyebrow">Cadastro</p>
+            <h2 id="modalTitle">Novo veículo</h2>
+          </div>
+          <button class="icon-btn" id="closeVehicleModal" type="button" title="Fechar" aria-label="Fechar">×</button>
+        </div>
+
+        <input type="hidden" id="vehicleId" />
+        <div class="form-grid">
+          <label>Marca e modelo<input id="model" required placeholder="Ex.: Honda Civic EXL" /></label>
+          <label>Ano<input id="year" required type="number" min="1980" max="2035" placeholder="2022" /></label>
+          <label>Placa<input id="plate" required placeholder="ABC1D23" /></label>
+          <label>Chassi<input id="vin" required placeholder="9BW..." /></label>
+          <label>Origem
+            <select id="origin">
+              <option>Compra direta</option>
+              <option>Troca</option>
+              <option>Consignado</option>
+              <option>Leilão</option>
+            </select>
+          </label>
+          <label>Status
+            <select id="status">
+              <option>Disponível</option>
+              <option>Preparação</option>
+              <option>Reservado</option>
+              <option>Vendido</option>
+            </select>
+          </label>
+          <label>Data de entrada<input id="entryDate" required type="date" /></label>
+          <label>Data da venda<input id="saleDate" type="date" /></label>
+          <label>Quilometragem<input id="mileage" required type="number" min="0" step="100" /></label>
+          <label>Custo de compra<input id="purchaseCost" required inputmode="numeric" placeholder="R$ 0,00" /></label>
+          <label>Custos extras<input id="extraCost" required inputmode="numeric" placeholder="R$ 0,00" /></label>
+          <label>Preço anunciado<input id="salePrice" required inputmode="numeric" placeholder="R$ 0,00" /></label>
+          <label>Próxima manutenção<input id="maintenanceDue" required type="date" /></label>
+        </div>
+
+        <fieldset>
+          <legend>Checklist documental</legend>
+          <label class="check"><input id="crlv" type="checkbox" /> CRLV conferido</label>
+          <label class="check"><input id="ipva" type="checkbox" /> IPVA/licenciamento ok</label>
+          <label class="check"><input id="inspection" type="checkbox" /> Laudo cautelar ok</label>
+          <label class="check"><input id="transfer" type="checkbox" /> Transferência encaminhada</label>
+        </fieldset>
+
+        <label>Observações<textarea id="notes" rows="3" placeholder="Pendências, fornecedores, negociação..."></textarea></label>
+
+        <div class="modal-actions">
+          <button class="ghost-btn" id="deleteVehicle" type="button">Excluir</button>
+          <div>
+            <button class="secondary-btn" id="cancelVehicle" type="button">Cancelar</button>
+            <button class="primary-btn" type="submit">Salvar</button>
+          </div>
+        </div>
+      </form>
+    </dialog>
+
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+    <script src="config.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
